@@ -1,4 +1,6 @@
 import { NavLink, Routes, Route } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { checkApiHealth } from "./services/api";
 import {
   LayoutDashboard,
   Briefcase,
@@ -15,6 +17,18 @@ import Profile from "./pages/Profile";
 import SettingsPage from "./pages/Settings";
 
 function Dashboard() {
+  const [apiStatus, setApiStatus] = useState("Checking...");
+
+  useEffect(() => {
+    checkApiHealth()
+      .then((data) => {
+        setApiStatus(data.message);
+      })
+      .catch(() => {
+        setApiStatus("API connection failed");
+      });
+  }, []);
+
   return (
     <>
       <header className="topbar">
@@ -23,9 +37,7 @@ function Dashboard() {
           <h1>Dashboard</h1>
         </div>
 
-        <button className="profile-button">
-          BK
-        </button>
+        <button className="profile-button">BK</button>
       </header>
 
       <section className="welcome">
@@ -34,6 +46,10 @@ function Dashboard() {
           <h2>Let's find your next opportunity.</h2>
           <p>
             Your job search activity, matches and applications in one place.
+          </p>
+
+          <p>
+            <strong>Backend status:</strong> {apiStatus}
           </p>
         </div>
 
